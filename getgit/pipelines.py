@@ -15,6 +15,8 @@ class MongoPipeline:
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
+        self.client = None
+        self.db = None
         spider_settings = get_project_settings()
         self.collection_name = spider_settings.get('MONGO_COLLECTION', 'scrapy_def_items')
 
@@ -30,7 +32,8 @@ class MongoPipeline:
         self.db = self.client[self.mongo_db]
 
     def close_spider(self, spider):
-        self.client.close()
+        if self.client:
+            self.client.close()
 
     def process_item(self, item, spider):
         # ToDo: check duplicates, pymongo.errors.DuplicateKeyError
