@@ -157,10 +157,25 @@ class GitSpider(scrapy.Spider):
         item['last_commit_author'] = last_commit.get('commit', dict()).get('author', dict()).get('name')
         item['last_commit_message'] = last_commit.get('commit', dict()).get('message')
         item['last_commit_datetime'] = last_commit.get('commit', dict()).get('author', dict()).get('date')
-        # ToDo: get releases count, get last release info
-        item['releases'] = 0
-        item['last_release_ver'] = None
-        item['last_release_change_log'] = None
-        item['last_release_datetime'] = None
-        self.logger.info('last commit: {}'.format(last_commit))
+        url = 'https://api.github.com/repos/{}/{}/releases?per_page=1'.format(owner, repo)
+        yield scrapy.Request(url=url, callback=self.parse_all_releases, meta={'item': item})
+
+    def parse_all_releases(self, response, **kwargs):
+        item = response.meta.get('item')
+        resp_data = response.json()
+        if len(resp_data):
+            last_release = resp_data[0]
+            if response.headers.get('Link'):
+                last_page_url = response.headers.get(
+                    'Link').decode().split(',')[1].split(';')[0].split('<')[1].split('>')[0]
+                all_releases_count = int(last_page_url.split('&page=')[1])
+            else:
+                all_releases_count = 0
+        else:
+            all_releases_count = 0
+            last_release = dict()
+        item['releases'] = all_releases_count
+        item['last_release_ver'] = last_release.get('name')
+        item['last_release_change_log'] = last_release.get('body')
+        item['last_release_datetime'] = last_release.get('published_at')
         yield item
