@@ -30,10 +30,6 @@ class GitSpider(scrapy.Spider):
         'https://github.com/ronggang',
         'https://github.com/scrapy/scrapy'
         ]
-    update_asin_cache = set()
-    global_asin_cache = set()
-    items_cache = dict()
-    sub_dept = dict()
 
     def __init__(self, ext_args):
         self.ext_args = ext_args
@@ -79,8 +75,10 @@ class GitSpider(scrapy.Spider):
         item['stars'] = resp_data.get('stargazers_count')
         item['forks'] = resp_data.get('forks_count')
         item['watching'] = resp_data.get('watchers_count')
+        # ToDo: get commits count, get last commit info
         # item['commits'] = resp_data.get('')
         # item['last_commit'] = Commit()
+        # ToDo: get releases count, get last release info
         # item['releases'] = resp_data.get('')
         # item['last_release'] = Release()
         self.logger.info('Link type: {}, title: {}, desc: {}, url: {}, *: {}, fork: {}, watch: {},'.format(
