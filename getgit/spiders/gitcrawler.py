@@ -83,4 +83,4 @@ class GitSpider(scrapy.Spider):
         # item['last_release'] = Release()
         self.logger.info('Link type: {}, title: {}, desc: {}, url: {}, *: {}, fork: {}, watch: {},'.format(
             account_type, *item.values()))
-        # yield item
+        yield item
