@@ -74,7 +74,7 @@ class GitSpider(scrapy.Spider):
         resp_data = response.json()
         item = GitItem()
         item['title'] = resp_data.get('name')
-        item['description'] = resp_data.get('bio')
+        item['description'] = resp_data.get('description')
         item['site_url'] = resp_data.get('html_url')
         item['stars'] = resp_data.get('stargazers_count')
         item['forks'] = resp_data.get('forks_count')
