@@ -67,9 +67,6 @@ class GitSpider(scrapy.Spider):
         account = response.meta.get('account')
         account_type = 'account' if account else 'repository'
         resp_data = response.json()
-        full_name = resp_data.get('full_name')
-        owner, repo = full_name.split('/')
-        default_branch = resp_data.get('default_branch')
         item = GitItem()
         item['item_type'] = account_type
         item['title'] = resp_data.get('name')
@@ -79,9 +76,13 @@ class GitSpider(scrapy.Spider):
         item['forks'] = resp_data.get('forks_count')
         item['watching'] = resp_data.get('watchers_count')
         if account:
+            owner = resp_data.get('login')
             url = 'https://api.github.com/users/{}/starred?per_page=1'.format(owner)
             yield scrapy.Request(url=url, callback=self.parse_account_starred, meta={'item': item, 'owner': owner})
         else:
+            full_name = resp_data.get('full_name')
+            owner, repo = full_name.split('/')
+            default_branch = resp_data.get('default_branch')
             self.logger.info('Link type: {}, title: {}, desc: {}, url: {}, *: {}, fork: {}, watch: {},'.format(
                 account_type, *item.values()))
             url = 'https://api.github.com/repos/{}/{}/commits'.format(owner, repo)
