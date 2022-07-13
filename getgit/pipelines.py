@@ -12,12 +12,11 @@ from scrapy.utils.project import get_project_settings
 
 class MongoPipeline:
 
-    spider_settings = get_project_settings()
-    collection_name = spider_settings.get('MONGO_COLLECTION', 'scrapy_def_items')
-
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
+        spider_settings = get_project_settings()
+        self.collection_name = spider_settings.get('MONGO_COLLECTION', 'scrapy_def_items')
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -34,6 +33,7 @@ class MongoPipeline:
         self.client.close()
 
     def process_item(self, item, spider):
+        # ToDo: check duplicates, pymongo.errors.DuplicateKeyError
         self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
         return item
 
