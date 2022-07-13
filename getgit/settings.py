@@ -7,10 +7,6 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-import datetime
-
-import getgit.pipelines
-
 BOT_NAME = 'getgit'
 
 SPIDER_MODULES = ['getgit.spiders']
