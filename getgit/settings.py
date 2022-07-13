@@ -16,13 +16,13 @@ BOT_NAME = 'getgit'
 SPIDER_MODULES = ['getgit.spiders']
 NEWSPIDER_MODULE = 'getgit.spiders'
 
-VERSION = '0.0.3'
+VERSION = '0.0.5'
 
 LINKS_FILE_NAME = 'links.txt'
 
 MONGO_URI = 'mongodb://localhost:27017'
 MONGO_DATABASE = 'git_get_db'
-MONGO_COLLECTION = 'git_data'
+MONGO_COLLECTION = 'git_items'
 
 # PROXY_POOL_BAN_POLICY = 'myproject.policy.BanDetectionPolicyNotText'
 
