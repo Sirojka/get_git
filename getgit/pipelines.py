@@ -7,11 +7,13 @@
 # useful for handling different item types with a single interface
 import pymongo
 from itemadapter import ItemAdapter
+from scrapy.utils.project import get_project_settings
 
 
 class MongoPipeline:
 
-    collection_name = 'scrapy_items'
+    spider_settings = get_project_settings()
+    collection_name = spider_settings.get('MONGO_COLLECTION', 'scrapy_def_items')
 
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
@@ -21,7 +23,7 @@ class MongoPipeline:
     def from_crawler(cls, crawler):
         return cls(
             mongo_uri=crawler.settings.get('MONGO_URI'),
-            mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
+            mongo_db=crawler.settings.get('MONGO_DATABASE', 'scrapy_def_db')
         )
 
     def open_spider(self, spider):
