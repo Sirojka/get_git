@@ -60,13 +60,13 @@ class GitSpider(scrapy.Spider):
         for link in self.links:
             url, url_type = self.check_link(link=link)
             if url:
-                self.logger.info('URL: {}'.format(url))
                 yield scrapy.Request(url=url, callback=self.parse, meta={'account': url_type})
 
     def parse(self, response, **kwargs):
         account = response.meta.get('account')
         account_type = 'account' if account else 'repository'
         resp_data = response.json()
+        self.logger.info('Link type: {}, url: {}'.format(account_type, resp_data.get('html_url')))
         item = GitItem()
         item['item_type'] = account_type
         item['title'] = resp_data.get('name')
@@ -83,8 +83,6 @@ class GitSpider(scrapy.Spider):
             full_name = resp_data.get('full_name')
             owner, repo = full_name.split('/')
             default_branch = resp_data.get('default_branch')
-            self.logger.info('Link type: {}, title: {}, desc: {}, url: {}, *: {}, fork: {}, watch: {},'.format(
-                account_type, *item.values()))
             url = 'https://api.github.com/repos/{}/{}/commits'.format(owner, repo)
             yield scrapy.Request(url=url, callback=self.parse_last_commit, meta={'item': item,
                                                                                  'owner': owner,
