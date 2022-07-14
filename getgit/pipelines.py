@@ -23,7 +23,8 @@ class MongoPipeline:
     @classmethod
     def from_crawler(cls, crawler):
         return cls(
-            mongo_uri=crawler.settings.get('MONGO_URI'),
+            # mongo_uri=crawler.settings.get('MONGO_URI'),
+            mongo_uri=crawler.spider.ext_args.mongo_uri,
             mongo_db=crawler.settings.get('MONGO_DATABASE', 'scrapy_def_db')
         )
 
