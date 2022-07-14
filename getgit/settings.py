@@ -12,7 +12,7 @@ BOT_NAME = 'getgit'
 SPIDER_MODULES = ['getgit.spiders']
 NEWSPIDER_MODULE = 'getgit.spiders'
 
-VERSION = '0.0.5'
+VERSION = '0.0.7'
 
 LINKS_FILE_NAME = 'links.txt'
 
@@ -39,7 +39,7 @@ DOWNLOAD_DELAY = 2.05
 # CONCURRENT_REQUESTS_PER_IP = 4
 
 # Disable cookies (enabled by default)
-# COOKIES_ENABLED = False
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
@@ -98,6 +98,11 @@ AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
 
 # Enable showing throttling stats for every response received:
 # AUTOTHROTTLE_DEBUG = False
+
+RETRY_ENABLED = True
+RETRY_TIMES = 3  # initial response + 2 retries = 3 requests
+RETRY_HTTP_CODES = [500, 502, 503, 504, 522, 524, 408, 429, 403, 400]
+
 
 # Enable and configure HTTP caching (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
