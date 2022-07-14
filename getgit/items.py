@@ -7,8 +7,7 @@ import scrapy
 
 
 class GitItem(scrapy.Item):
-    item_type = scrapy.Field()
-    title = scrapy.Field()
+    full_name = scrapy.Field()
     description = scrapy.Field()
     site_url = scrapy.Field()
     stars = scrapy.Field()
