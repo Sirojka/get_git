@@ -28,7 +28,7 @@ The program for scraping info about GitHub accounts/repositories using datafile 
 
 **Build**
 
-First of all we need to copy of the project from GitHub repository, run in terminal `git clone https://github.com/asas.git`. After, go to project folder with: `cd get_git`, and all you need is a run `./build_image.sh` file or run `sudo docker build -t "get_git" .` command from the root folder of the project.
+Firstly we need to copy the project sources from GitHub repository to local computer, run in terminal `git clone https://github.com/Sirojka/get_git.git`. After, go to project folder with: `cd get_git`, and all you need is a run `./build_image.sh` file or run `sudo docker build -t "get_git" .` command from the root folder of the project.
 
 **Run**
 
