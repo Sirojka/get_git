@@ -1,11 +1,10 @@
 **About**
 
-The program for scraping info about GitHub accounts/repositories using datafile with the list of links. Datafile is a text file with the one link per line. The program checks is link correct or not, checks link type: account or repository, for repository can get additional info: commits count, last commit info, releases count, last release, last release changelog. And base info for account/repository: name, url, about, stars count, forks count, watching count. Can be run in test mode with hardcoded list of links. Scraped info will be saving to the MongoDB.
+The program for scraping info about GitHub repositories using datafile with the list of links. Datafile is a text file with the one link per line. The program checks is link correct or not. For each account link program get list of repo, for each repo we get info: full name, url, description, stars count, forks count, watching count, commits count, last commit info, releases count, last release, last release changelog. Can be run in test mode with hardcoded list of links. Scraped info will be saving to the MongoDB.
 
 **Using data structure**
 
-    item_type = account/repository
-    title = str()
+    full_name = str()
     description = str()
     site_url = str()
     stars = int()
@@ -60,7 +59,7 @@ After you get mongo_uri connection string you need start scraper with next comma
 
 *Example of datafile:*
 
-    https://github.com/scrapy/base-chromium
-    https://github.com/scrapy/booksbot
+    https://github.com/scrapy
+    https://github.com/arm-software
     https://github.com/ronggang
-    https://github.com/scrapy/cssselect
+    https://github.com/windoze
