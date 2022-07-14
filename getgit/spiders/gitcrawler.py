@@ -21,14 +21,15 @@ class GitSpider(scrapy.Spider):
     links = list()
 
     custom_settings = {
-    #     'LOG_FILE': '/var/log/getgit_log.log',
-         'LOG_LEVEL': 'INFO'
+        # 'LOG_FILE': '/var/log/getgit_log.log',
+        'LOG_LEVEL': 'INFO'
     }
 
     test_links = [
         'https://github.com/ronggang',
-        'https://github.com/arm-software',
-        'https://github.com/scrapy/scrapy'
+        # 'https://github.com/arm-software',
+        'https://github.com/scrapy/scrapy',
+        'https://github.com/scrapy'
         ]
 
     def __init__(self, ext_args):
@@ -57,38 +58,34 @@ class GitSpider(scrapy.Spider):
             self.logger.warning('Running in TEST MODE!!! Will use test list of links, {} items.'.format(
                 len(self.links)))
         for link in self.links:
-            url, url_type = self.check_link(link=link)
+            url = self.check_link(link=link)
             if url:
-                yield scrapy.Request(url=url, callback=self.parse, meta={'account': url_type})
+                yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
-        account = response.meta.get('account')
-        account_type = 'account' if account else 'repository'
         resp_data = response.json()
-        self.logger.info('Link type: {}, url: {}'.format(account_type, resp_data.get('html_url')))
-        item = GitItem()
-        item['item_type'] = account_type
-        item['title'] = resp_data.get('name')
-        item['description'] = resp_data.get('description')
-        item['site_url'] = resp_data.get('html_url')
-        item['stars'] = resp_data.get('stargazers_count')
-        item['forks'] = resp_data.get('forks_count')
-        item['watching'] = resp_data.get('watchers_count')
-        if account:
-            owner = resp_data.get('login')
-            # url = 'https://api.github.com/users/{}/starred?per_page=1'.format(owner)
-            # yield scrapy.Request(url=url, callback=self.parse_account_starred, meta={'item': item, 'owner': owner})
-            url = 'https://api.github.com/users/{}/repos'.format(owner)
-            yield scrapy.Request(url=url, callback=self.parse_repos, meta={'item': item, 'owner': owner})
-        else:
-            full_name = resp_data.get('full_name')
-            owner, repo = full_name.split('/')
-            default_branch = resp_data.get('default_branch')
-            url = 'https://api.github.com/repos/{}/{}/commits'.format(owner, repo)
-            yield scrapy.Request(url=url, callback=self.parse_last_commit, meta={'item': item,
-                                                                                 'owner': owner,
-                                                                                 'repo': repo,
-                                                                                 'default_branch': default_branch})
+        user = None
+        if len(resp_data) > 0:
+            for repo in resp_data:
+                item = GitItem()
+                item['full_name'] = repo.get('full_name')
+                item['description'] = repo.get('description')
+                item['site_url'] = repo.get('html_url')
+                item['stars'] = repo.get('stargazers_count')
+                item['forks'] = repo.get('forks_count')
+                item['watching'] = repo.get('watchers_count')
+                user = repo.get('owner', dict()).get('login')
+                default_branch = repo.get('default_branch')
+                url = 'https://api.github.com/repos/{}/commits'.format(item['full_name'])
+                yield scrapy.Request(url=url, callback=self.parse_last_commit, meta={'item': item,
+                                                                                     'default_branch': default_branch})
+        if response.headers.get('Link'):
+            next_page = response.headers.get('Link').decode().split(',')[0]
+            if 'next' in next_page:
+                next_page_url = next_page.split(';')[0].split('<')[1].split('>')[0]
+                next_page_num = int(next_page_url.split('=')[1])
+                url = 'https://api.github.com/users/{}/repos?page={}'.format(user, next_page_num)
+                yield scrapy.Request(url=url, callback=self.parse)
 
     def parse_repos(self, response, **kwargs):
         item = response.meta.get('item')
@@ -101,8 +98,6 @@ class GitSpider(scrapy.Spider):
 
     def parse_last_commit(self, response, **kwargs):
         item = response.meta.get('item')
-        owner = response.meta.get('owner')
-        repo = response.meta.get('repo')
         default_branch = response.meta.get('default_branch')
         resp_data = response.json()
         last_commit = resp_data[0]
