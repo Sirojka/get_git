@@ -16,7 +16,7 @@ VERSION = '0.0.5'
 
 LINKS_FILE_NAME = 'links.txt'
 
-MONGO_URI = 'mongodb://localhost:27017'
+# MONGO_URI = 'mongodb://localhost:27017'
 MONGO_DATABASE = 'git_get_db'
 MONGO_COLLECTION = 'git_items'
 
