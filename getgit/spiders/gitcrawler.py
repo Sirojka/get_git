@@ -27,6 +27,7 @@ class GitSpider(scrapy.Spider):
 
     test_links = [
         'https://github.com/ronggang',
+        'https://github.com/arm-software',
         'https://github.com/scrapy/scrapy'
         ]
 
@@ -36,19 +37,17 @@ class GitSpider(scrapy.Spider):
 
     def check_link(self, link):
         api_url = None
-        is_account = False
         parsed_url = urlparse(url=link)
         if parsed_url.netloc == 'github.com':
             url_path = parsed_url.path.strip('/').lstrip('/')
             url_path_chunks = url_path.split('/')
             if len(url_path_chunks) == 1:
-                api_url = 'https://api.github.com/users/{}'.format(*url_path_chunks)
-                is_account = True
-            elif len(url_path_chunks) == 2:
-                api_url = 'https://api.github.com/repos/{}/{}'.format(*url_path_chunks)
+                api_url = 'https://api.github.com/users/{}/repos'.format(url_path_chunks[0])
+            else:
+                self.logger.error('Bad link: {}'.format(link))
         else:
             self.logger.error('Bad link: {}'.format(link))
-        return api_url, is_account
+        return api_url
 
     def start_requests(self):
         self.logger.info('Spider version: {}'.format(self.settings.get('VERSION')))
@@ -77,8 +76,10 @@ class GitSpider(scrapy.Spider):
         item['watching'] = resp_data.get('watchers_count')
         if account:
             owner = resp_data.get('login')
-            url = 'https://api.github.com/users/{}/starred?per_page=1'.format(owner)
-            yield scrapy.Request(url=url, callback=self.parse_account_starred, meta={'item': item, 'owner': owner})
+            # url = 'https://api.github.com/users/{}/starred?per_page=1'.format(owner)
+            # yield scrapy.Request(url=url, callback=self.parse_account_starred, meta={'item': item, 'owner': owner})
+            url = 'https://api.github.com/users/{}/repos'.format(owner)
+            yield scrapy.Request(url=url, callback=self.parse_repos, meta={'item': item, 'owner': owner})
         else:
             full_name = resp_data.get('full_name')
             owner, repo = full_name.split('/')
@@ -88,6 +89,15 @@ class GitSpider(scrapy.Spider):
                                                                                  'owner': owner,
                                                                                  'repo': repo,
                                                                                  'default_branch': default_branch})
+
+    def parse_repos(self, response, **kwargs):
+        item = response.meta.get('item')
+        owner = response.meta.get('owner')
+        resp_data = response.json()
+        if len(resp_data) > 0:
+            for repo in resp_data:
+
+        self.logger.info(response.headers)
 
     def parse_last_commit(self, response, **kwargs):
         item = response.meta.get('item')
