@@ -12,7 +12,7 @@ BOT_NAME = 'getgit'
 SPIDER_MODULES = ['getgit.spiders']
 NEWSPIDER_MODULE = 'getgit.spiders'
 
-VERSION = '0.0.7'
+VERSION = '0.0.8'
 
 LINKS_FILE_NAME = 'links.txt'
 
