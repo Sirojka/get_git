@@ -26,7 +26,9 @@ if __name__ == "__main__":
     parser.add_argument('--datafile', action='store', dest='datafile', type=str, default=datafile,
                         help='path to the data file with list of links to repo/projects')
     parser.add_argument('--mongo_uri', action='store', dest='mongo_uri', type=str, default='mongodb://localhost:27017',
-                        help='mongo db uri for connect to mongo db database')
+                        help='mongo db uri for connect to mongo db database, mongodb://HOST:POST')
+    parser.add_argument('--proxy', action='store', dest='proxy', type=str, default='',
+                        help='enable proxy with provided connection string in format http://USER:PASS@HOST:PORT')
     args = parser.parse_args()
     process = CrawlerProcess(p_settings)
     process.crawl(GitSpider, ext_args=args)
