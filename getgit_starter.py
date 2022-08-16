@@ -20,7 +20,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='github.com scraper', add_help=True)
     parser.add_argument('--test', action='store_true', dest='test', default=False,
                         help='test mode: for simple test with the few accounts as argument')
-    # ToDo: use this arg to switch api/html mode
     parser.add_argument('--api', action='store_true', dest='api', default=False,
                         help='use api or dumb html scraper mode')
     parser.add_argument('--datafile', action='store', dest='datafile', type=str, default=datafile,
@@ -29,6 +28,8 @@ if __name__ == "__main__":
                         help='mongo db uri for connect to mongo db database, mongodb://HOST:POST')
     parser.add_argument('--proxy', action='store', dest='proxy', type=str, default='',
                         help='enable proxy with provided connection string in format http://USER:PASS@HOST:PORT')
+    parser.add_argument('--apikey', action='store', dest='apikey', type=str, default='',
+                        help='github apikey for auth scraping')
     args = parser.parse_args()
     process = CrawlerProcess(p_settings)
     process.crawl(GitSpider, ext_args=args)
