@@ -53,6 +53,7 @@ After you get mongo_uri connection string you need start scraper with next comma
 
 **Command line options**
 
+- --apikey - api-key for Github API, allow 5000 requests per hour
 - --test - run program in test-mode, will test only 2 hardcoded links (one account and one repository)
 - --mongo_uri *MONGO_URI_STR* - uri for mongodb connection, default: mongodb://localhost:27017, format: mongodb://HOST:PORT
 - --datafile *DATAFILE_STR* - full path to file with list of links, default: stored in settings as LINKS_FILE_NAME, you need to provide full path to file, like as /opt/files/links.txt and don't forget map /opt/files folder to docker container with -v option
